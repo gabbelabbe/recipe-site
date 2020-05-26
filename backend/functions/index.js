@@ -1,10 +1,10 @@
+const functions = require('firebase-functions');
 const express = require('express');
 const app = express();
 const { db } = require('./firebase');
 
-app.listen(8080, () => {
-  console.info('Express server is running on port 8080!');
-});
+const cors = require('cors')({origin: true});
+app.use(cors);
 
 app.use(express.json());
 
@@ -64,3 +64,5 @@ app.delete('/recipe/:id', function (req, res) {
     res.status(500).send(err);
   }
 });
+
+exports.api = functions.https.onRequest(app);

@@ -10,6 +10,9 @@ import {
   MuiPickersUtilsProvider, 
   KeyboardDatePicker 
 } from '@material-ui/pickers';
+import RestClient from './../api/RestClient';
+
+const restClient = new RestClient();
 
 export default function FoodItemForm({
   open, setOpen,
@@ -18,36 +21,44 @@ export default function FoodItemForm({
 }) {
   const [newFoodItem, setNewFoodItem] = useState("");
   const [newRecipeLink, setNewRecipeLink] = useState("");
-  const [selectedDate, setSelectedDate] = useState(!!recipeInfo ? (recipeInfo.date) : (moment()));
-
-  const handleClose= () => {
+  const [selectedDate, setSelectedDate] = useState(!!recipeInfo ? (moment(recipeInfo.date)) : (moment()));
+  
+  const handleClose = async () => {
     if(!!recipeInfo) {
-      const tempArr = [...recipes];
-      for(let i = 0; i < tempArr.length; i++) {
-        if(tempArr[i] === recipeInfo) {
-          tempArr[i] = {
-            date: selectedDate,
-            foodItem: !!newFoodItem ? (newFoodItem) : (recipeInfo.foodItem),
-            recipeLink: !!newRecipeLink ? (newRecipeLink) : (recipeInfo.recipeLink),
-            id: recipeInfo.id,
-            week: selectedDate.week()
+      const newRecipeInfo = {
+        date: selectedDate,
+        foodItem: !!newFoodItem ? (newFoodItem) : (recipeInfo.foodItem),
+        recipeLink: !!newRecipeLink ? (newRecipeLink) : (recipeInfo.recipeLink),
+        id: recipeInfo.id,
+        week: selectedDate.week()
+      };
+      const response = await restClient.patchRecipe(newRecipeInfo);
+      if(response.status === 200) {
+        const tempArr = [...recipes];
+        for(let i = 0; i < tempArr.length; i++) {
+          if(tempArr[i] === recipeInfo) {
+            tempArr[i] = newRecipeInfo;
           }
         }
+        setRecipes(tempArr);
       }
-      setRecipes(tempArr);
     } else if(!!newFoodItem) {
-      setRecipes(
-        [
-          ...recipes,
-          {
-            date: selectedDate,
-            foodItem: newFoodItem,
-            recipeLink: newRecipeLink,
-            id: recipes.length,
-            week: selectedDate.week()
-          }
-        ]
-      )
+      const newRecipeInfo = {
+        date: selectedDate,
+        foodItem: newFoodItem,
+        recipeLink: newRecipeLink,
+        week: selectedDate.week()
+      };
+
+      const response = await restClient.postRecipe(newRecipeInfo);
+      if(response.status === 200) {
+        setRecipes(
+          [
+            ...recipes,
+            newRecipeInfo
+          ]
+        )
+      }
     }
     setOpen(false);
   };

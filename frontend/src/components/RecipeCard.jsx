@@ -12,6 +12,9 @@ import FastfoodIcon from '@material-ui/icons/Fastfood';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FoodItemForm from './FoodItemForm';
+import RestClient from './../api/RestClient';
+
+const restClient = new RestClient();
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -48,14 +51,18 @@ export default function RecipeCard({ recipeInfo, setRecipes, recipes }) {
     setOpen(true);
   }
 
-  const handleDelete = () => {
-    const keptRecipes = [];
-    for(let i = 0; i < recipes.length; i++) {
-      if(recipes[i].id !== recipeInfo.id) {
-        keptRecipes.push(recipes[i]);
+  const handleDelete = async () => {
+    const response = await restClient.deleteRecipe(recipeInfo.id);
+
+    if(response.status === 200) {
+      const keptRecipes = [];
+      for(let i = 0; i < recipes.length; i++) {
+        if(recipes[i].id !== recipeInfo.id) {
+          keptRecipes.push(recipes[i]);
+        }
       }
+      setRecipes(keptRecipes);
     }
-    setRecipes(keptRecipes);
   }
 
   return (

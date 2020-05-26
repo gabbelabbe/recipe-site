@@ -3,21 +3,30 @@ import moment from 'moment';
 import Header from './components/Header';
 import RecipeCard from './components/RecipeCard';
 import AddNewRecipe from './components/AddNewRecipe';
+import RestClient from './api/RestClient';
+
+const restClient = new RestClient();
 
 export default function SimpleCard() {
   const [selectedDate, setSelectedDate] = useState(moment());
-  const [recipes, setRecipes] = useState([{
-    date: selectedDate,
-    foodItem: "Köttbullar med potatismos",
-    recipeLink: "#",
-    id: 0,
-    week: selectedDate.week()
-  }])
+  const [recipes, setRecipes] = useState([]);
   const [recipeCards, setRecipeCards] = useState([]);
 
   useEffect(() => {
-    setRecipes(recipes.sort(compare));
-    setRecipeCards(generateRecipeCards());
+    const getRecipes = async () => {
+      if(!!recipes && recipes.length !== 0) {
+        setRecipes(recipes.sort(compare));
+        setRecipeCards(generateRecipeCards());
+      } else {
+        const temp = await restClient.getRecipes();
+        for(const recipe of temp) {
+          recipe.date = await moment(recipe.date);
+        }
+        setRecipes(temp);
+      }
+    }
+
+    getRecipes();
   }, [recipes, selectedDate]);
 
   const compare = (a, b) => {
