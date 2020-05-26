@@ -11,10 +11,11 @@ export default function SimpleCard() {
   const [selectedDate, setSelectedDate] = useState(moment());
   const [recipes, setRecipes] = useState([]);
   const [recipeCards, setRecipeCards] = useState([]);
+  const [sentGetRequest, setSentGetRequest] = useState(false);
 
   useEffect(() => {
     const getRecipes = async () => {
-      if(!!recipes && recipes.length !== 0) {
+      if((!!recipes && recipes.length !== 0) || sentGetRequest) {
         setRecipes(recipes.sort(compare));
         setRecipeCards(generateRecipeCards());
       } else {
@@ -23,6 +24,7 @@ export default function SimpleCard() {
           recipe.date = await moment(recipe.date);
         }
         setRecipes(temp);
+        setSentGetRequest(true);
       }
     }
 

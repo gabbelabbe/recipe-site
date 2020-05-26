@@ -4,7 +4,13 @@ class RestClient {
   }
 
   getRecipes() {
-    return fetch(this.baseUrl + '/recipes')
+    return fetch(this.baseUrl + '/recipes', {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
       .then(response => response.json())
       .then(data => {
         console.log(data.recipes);
@@ -36,7 +42,7 @@ class RestClient {
   }
 
   deleteRecipe(data) {
-    return fetch(this.baseUrl + '/recipe/' + data.id, {
+    return fetch(this.baseUrl + '/recipe/' + data, {
       method: 'DELETE',
       mode: 'cors',
       headers: {

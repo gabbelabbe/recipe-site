@@ -53,7 +53,6 @@ export default function RecipeCard({ recipeInfo, setRecipes, recipes }) {
 
   const handleDelete = async () => {
     const response = await restClient.deleteRecipe(recipeInfo.id);
-
     if(response.status === 200) {
       const keptRecipes = [];
       for(let i = 0; i < recipes.length; i++) {

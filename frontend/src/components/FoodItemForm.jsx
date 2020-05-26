@@ -60,6 +60,7 @@ export default function FoodItemForm({
         )
       }
     }
+    setSelectedDate(moment());
     setOpen(false);
   };
 
