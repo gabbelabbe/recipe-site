@@ -5,3 +5,6 @@ The backend part consists of a express app thats being hosted as a cloud functio
 
 ## Frontend
 The frontend part is a react app that gets data from the Rest API and displays it, you can add, edit and remove recipes using the CRUD interface.
+
+## Note
+This site is porly made, it's on my todo list to make it better.
